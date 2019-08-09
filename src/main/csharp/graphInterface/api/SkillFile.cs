@@ -1,0 +1,79 @@
+/*  ___ _  ___ _ _                                                                                                   *\
+ * / __| |/ (_) | |     Your SKilL csharp Binding                                                                    * 
+ * \__ \ ' <| | | |__   <<debug>>                                                                                    * 
+ * |___/_|\_\_|_|____|  by: <<some developer>>                                                                       * 
+\*                                                                                                                    */
+
+using System.IO;
+using System.Collections.Generic;
+
+using de.ust.skill.common.csharp.api;
+using de.ust.skill.common.csharp.@internal;
+using de.ust.skill.common.csharp.@internal.fieldTypes;
+using SkillState = graphInterface.@internal.SkillState;
+
+namespace graphInterface
+{
+    namespace api
+    {
+
+        /// <summary>
+        /// An abstract skill file that is hiding all the dirty implementation details from you.
+        ///
+        /// @author Simon Glaub, Timm Felden
+        /// </summary>
+        public abstract class SkillFile : de.ust.skill.common.csharp.@internal.SkillState, de.ust.skill.common.csharp.api.SkillFile {
+
+            public SkillFile(StringPool strings, string path, Mode mode, List<AbstractStoragePool> types,
+                Dictionary<string, AbstractStoragePool> poolByName, StringType stringType, Annotation annotationType)
+                : base(strings, path, mode, types, poolByName, stringType, annotationType)
+            { }
+
+            /// <summary>
+            /// Create a new skill file based on argument path and mode.
+            /// </summary>
+            public static SkillFile open(string path, params Mode[] mode) {
+                FileInfo f = new FileInfo(path);
+                return open(f, mode);
+            }
+
+            /// <summary>
+            /// Create a new skill file based on argument path and mode.
+            /// </summary>
+            public static SkillFile open(FileInfo path, params Mode[] mode) {
+                foreach (Mode m in mode) {
+                    if (m == Mode.Create && !path.Exists)
+                        path.Create().Close();
+                }
+                return SkillState.open(path.FullName, mode);
+            }
+
+            /// <returns> an access for all AbstractNodes in this state </returns>
+            public abstract @internal.P0 AbstractNodes();
+
+            /// <returns> an access for all ColorHolders in this state </returns>
+            public abstract @internal.P1 ColorHolders();
+
+            /// <returns> an access for all Nodes in this state </returns>
+            public abstract @internal.P2 Nodes();
+
+            /// <returns> an access for all SubNodes in this state </returns>
+            public abstract @internal.P3 SubNodes();
+
+            /// <returns> an access for all Coloreds in this state </returns>
+            public abstract de.ust.skill.common.csharp.@internal.UnrootedInterfacePool<graphInterface.Colored> Coloreds();
+
+            /// <returns> an access for all Markers in this state </returns>
+            public abstract de.ust.skill.common.csharp.@internal.UnrootedInterfacePool<graphInterface.Marker> Markers();
+
+            /// <returns> an access for all ColoredNodes in this state </returns>
+            public abstract de.ust.skill.common.csharp.@internal.InterfacePool<SkillObject, graphInterface.AbstractNode> ColoredNodes();
+
+            /// <returns> an access for all Unuseds in this state </returns>
+            public abstract de.ust.skill.common.csharp.@internal.InterfacePool<SkillObject, graphInterface.AbstractNode> Unuseds();
+
+            /// <returns> an access for all UnusedRootlesss in this state </returns>
+            public abstract de.ust.skill.common.csharp.@internal.UnrootedInterfacePool<graphInterface.UnusedRootless> UnusedRootlesss();
+        }
+    }
+}
